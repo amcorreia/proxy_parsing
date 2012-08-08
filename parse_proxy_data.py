@@ -5,6 +5,8 @@ import sys
 
 def parseDirectory(listing):
 
+    d1 = {}
+
     for infile in listing:
     
         fileName = path + infile
@@ -37,6 +39,11 @@ def parseDirectory(listing):
             #print url
     
         print fileName + " " + key.encode("hex") + " " + url
+
+        d1[str(key.encode("hex"))] = [fileName, url]
+
+    print d1
+
 
 if __name__ == "__main__":
 
