@@ -3,7 +3,15 @@ import os.path, os
 import sys
 
 
-def parseDirectory(listing):
+def iterateDirectories(path, subdirs):
+
+    for subdir in subdirs:
+        print path + subdir
+        listing = os.listdir(path + subdir)
+        print listing
+        #parseSubDirectory(listing)
+
+def parseSubDirectory(listing):
 
     d1 = {}
 
@@ -38,11 +46,12 @@ def parseDirectory(listing):
             index = index + 1
             #print url
     
-        print fileName + " " + key.encode("hex") + " " + url
+        # print fileName + " " + key.encode("hex") + " " + url
 
         d1[str(key.encode("hex"))] = [fileName, url]
 
-    print d1
+    for key, item in d1.items():
+        print key, item
 
 
 if __name__ == "__main__":
@@ -50,5 +59,6 @@ if __name__ == "__main__":
     path = sys.argv[1]
 
     listing = os.listdir(path)
-    parseDirectory(listing)
+    iterateDirectories(path, listing)
+    # parseSubDirectory(listing)
 
