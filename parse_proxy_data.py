@@ -2,22 +2,43 @@
 import os.path, os
 import sys
 
+"""
+todo:
+- still need to back out one level while iterating through directories
+- parse command line arg . . .
+    -c location of squid cache files
+    -l location of squid log files
+"""
+
+def parseSquidCacheFiles():
+    """ 
+    Given location of squid cache, iterates through subdirectories and creates 
+    data structure (dictionary) keyed by squid key and containing filename
+    and URI of cached data
+    """
+
+    path = sys.argv[1]
+
+    listing = os.listdir(path)
+    iterateDirectories(path, listing)
+
 
 def iterateDirectories(path, subdirs):
 
     for subdir in subdirs:
-        print path + subdir
-        listing = os.listdir(path + subdir)
-        print listing
-        #parseSubDirectory(listing)
+        newPath = path + subdir
+        listing = os.listdir(newPath)
+        if listing != []:
+            # print newPath, listing    
+            parseSubDirectory(newPath, listing)
 
-def parseSubDirectory(listing):
+def parseSubDirectory(newPath, listing):
 
     d1 = {}
 
     for infile in listing:
     
-        fileName = path + infile
+        fileName = newPath + "/" + infile
         # print "**** " + fileName
 
         f = open(fileName, 'rb')
@@ -56,9 +77,6 @@ def parseSubDirectory(listing):
 
 if __name__ == "__main__":
 
-    path = sys.argv[1]
+    parseSquidCacheFiles()
 
-    listing = os.listdir(path)
-    iterateDirectories(path, listing)
-    # parseSubDirectory(listing)
 
