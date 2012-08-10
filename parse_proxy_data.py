@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 import os.path, os
 import sys
+import optparse
+
+from squidRecord import *
+
 
 """
 todo:
@@ -17,10 +21,15 @@ def parseSquidCacheFiles():
     and URI of cached data
     """
 
-    path = sys.argv[1]
+    # parse command line options
+    parser = optparse.OptionParser(description='Proxy parsing arguments')
+    parser.add_option('-c', action="store", dest="cacheFilePath")
 
-    listing = os.listdir(path)
-    iterateDirectories(path, listing)
+    options, remainder = parser.parse_args()
+    listing = os.listdir(options.cacheFilePath)
+
+    # call function to iterate through directories in squid proxy cache
+    iterateDirectories(options.cacheFilePath, listing)
 
 
 def iterateDirectories(path, subdirs):
@@ -69,10 +78,11 @@ def parseSubDirectory(newPath, listing):
     
         # print fileName + " " + key.encode("hex") + " " + url
 
-        d1[str(key.encode("hex"))] = [fileName, url]
+        d1[str(key.encode("hex"))] = squidRecord(str(key.encode("hex")),
+                                        fileName, url)
 
     for key, item in d1.items():
-        print key, item
+        print key, item.path, item.uri
 
 
 if __name__ == "__main__":
