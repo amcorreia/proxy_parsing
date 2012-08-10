@@ -21,9 +21,13 @@ def parseSquidCacheFiles():
     and URI of cached data
     """
 
-    # parse command line options
+    # parse command line options.  Using the "old" optparse instead of argparse
+    # for better backward compatibility.
     parser = optparse.OptionParser(description='Proxy parsing arguments')
-    parser.add_option('-c', action="store", dest="cacheFilePath")
+    parser.add_option('-c', action="store", dest="cacheFilePath", 
+                        default="/var/spool/squid/", help="path to cached squid objects")
+    parser.add_option('-l', action="store", dest="logFilePath", default="/var/log/squid/",
+                        help="path to squid log files")
 
     options, remainder = parser.parse_args()
     listing = os.listdir(options.cacheFilePath)
@@ -34,21 +38,40 @@ def parseSquidCacheFiles():
 
 def iterateDirectories(path, subdirs):
 
+    # make sure last character of path is "/"
+    if path[-1] != "/":
+        path = path + "/"
+        
+    # iterate through highest level of squid cache hierarchy
     for subdir in subdirs:
         newPath = path + subdir
-        listing = os.listdir(newPath)
-        if listing != []:
-            # print newPath, listing    
-            parseSubDirectory(newPath, listing)
+        
+        # be sure to list subdirs, don't try to get directory listings of files!
+        if os.path.isdir(newPath):
 
-def parseSubDirectory(newPath, listing):
+            # list the subdirectories within the cache             
+            listing = os.listdir(newPath)
+      
+            # now, loop through subdirs
+            for subsubdir in listing:
+                newNewPath = newPath + "/" + subsubdir
+        
+                if os.path.isdir(newNewPath):
+
+                    sublisting = os.listdir(newNewPath)
+
+                    # loop through cache objects in each non-empty folder and parse
+                    if sublisting != []:
+                        parseSquidCacheObject(newNewPath, sublisting)
+
+
+def parseSquidCacheObject(newPath, listing):
 
     d1 = {}
 
     for infile in listing:
     
         fileName = newPath + "/" + infile
-        # print "**** " + fileName
 
         f = open(fileName, 'rb')
     
