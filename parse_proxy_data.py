@@ -86,7 +86,7 @@ def parseSquidCacheObject(newPath, listing):
             line1 = line1 + str(f.read(8))
             index = index + 1
     
-        key = line1[0x0a:0x19]
+        key = line1[0x0a:0x1A]
         
         url = ""
         stop = 0 
